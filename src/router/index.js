@@ -21,6 +21,16 @@ const routes = [
     name: 'categoria',
     component: () => import('../views/CategoriaView.vue')
   },
+  {
+    path: '/facturas',
+    name: 'facturas',
+    component: () => import('../views/FacturasView.vue')
+  },
+  {
+    path: '/orden-compra',
+    name: 'orden-compra',
+    component: () => import('../views/OrdenCompraView.vue')
+  },
 ]
 
 const router = createRouter({
