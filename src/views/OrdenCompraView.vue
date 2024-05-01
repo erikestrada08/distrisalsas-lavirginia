@@ -1,6 +1,6 @@
 <template>
     <div class="Factura h-100 w-100">
-        <div class="container fluid h-100">
+        <div class="container-fluid h-100">
             <div class="row h-100">
                 <div class="col-8 py-2">
                     <div class="row">
@@ -56,35 +56,39 @@
                                 </li>
                             </ul>
                         </div>
-                        <div class="boton-flotante" data-bs-toggle="modal" data-bs-target="#modal-agregar-producto">
+                        <div class="boton-flotante"
+                        @click="modalAgregarProducto = true"
+                        >
                             <i class="mdi mdi-plus"></i>
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="modal-agregar-producto" tabindex="-1" aria-labelledby="modal-agregar-productoLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header p-2 bg-danger text-white">
-                        <h1 class="modal-title fs-5" id="modal-agregar-productoLabel">Crear Producto</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <crear_producto ref="componenteCrearProducto"></crear_producto>
-                    </div>
-                    <div class="modal-footer p-2">
-                        <button @click.prevent="crearProducto" type="button" class="btn btn-primary btn-sm">
-                            <i class="mdi mdi-content-save"></i>
-                            Guardar
-                        </button>
-                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
-                            <i class="mdi mdi-close"></i>
-                        </button>
-                    </div>
+
+        <v-dialog
+        v-model="modalAgregarProducto"
+        max-width="500"
+        >
+            <div class="card">
+                <div class="card-header">
+                    Agregar Producto
+                </div>
+                <div class="card-body">
+                    <crear_producto
+                    ref="componenteCrearProducto"
+                    ></crear_producto>
+                </div>
+                <div class="card-footer text-end">
+                    <button 
+                    @click.prevent="crearProducto"
+                    class="btn btn-primary btn-sm">
+                        Guardar Producto
+                    </button>
                 </div>
             </div>
-        </div>
+        </v-dialog>
     </div>
 </template>
 <script>
@@ -95,31 +99,36 @@ export default {
     },
     data(){
         return {
-            productos:[
-                {producto:'VASO 7oz WAU!',cantidad:null,iva:null,total:null},
-                {producto:'VASO 12oz CARIBE',cantidad:null,iva:null,total:null},
-                {producto:'CONTENERDO 16oz WAU!',cantidad:null,iva:null,total:null},
-                {producto:'CARNE HAMBURGUESA RICA 500g',cantidad:null,iva:null,total:null}
-            ],
+            productos:[],
             productosOrden:[],
-            productoBuscado:null
+            productoBuscado:null,
+            modalAgregarProducto:false,
         }
     },
     methods:{
-        agregarProducto(_producto,_indice){
+        agregarProducto(_producto){
             if(!this.productosOrden.includes(_producto)){
                 this.productosOrden.push(_producto);
                 this.productosOrden.sort();
-                this.productos.splice(_indice,1);
+                this.productos.splice(this.productos.indexOf(_producto), 1);
             }
         },
         removerProducto(_producto,_indice){
-            this.productosOrden.splice(_indice,1);
-            this.productos.push(_producto);
-            this.productos.sort();
+            if(!this.productos.includes(_producto)){
+                this.productosOrden.splice(_indice,1);
+                this.productos.push(_producto);
+                this.productos.sort();
+            }
         },
         crearProducto(){
             this.$refs.componenteCrearProducto.guardarProducto();
+        },
+        async obtenerDatos(){
+            await this.axios.get('https://localhost:7128/api/Producto/Listar').then(res=>{
+                this.productos = res.data;
+            }).catch(err=>{
+                console.error(err);
+            });
         }
     },
     computed:{
@@ -128,6 +137,9 @@ export default {
                 return _p.producto.toLowerCase().includes(this.productoBuscado.toLowerCase());
             }) : this.productos;
         }
+    },
+    mounted() {
+        this.obtenerDatos();
     }
 }
 </script>

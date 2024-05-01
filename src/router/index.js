@@ -2,6 +2,11 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
   {
+    path:'/',
+    name: 'login',
+    component: () => import('../views/LoginView.vue')
+  },
+  {
     path: '/dashboard',
     name: 'dashboard',
     component: () => import('../views/DashboardView.vue')
@@ -30,7 +35,7 @@ const routes = [
     path: '/orden-compra',
     name: 'orden-compra',
     component: () => import('../views/OrdenCompraView.vue')
-  },
+  }
 ]
 
 const router = createRouter({

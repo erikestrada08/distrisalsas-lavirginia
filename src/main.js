@@ -9,8 +9,7 @@ import * as directives from 'vuetify/directives';
 import '@mdi/font/css/materialdesignicons.css'; 
 import('bootstrap/dist/css/bootstrap.css');
 import('bootstrap/dist/js/bootstrap.bundle.min.js');
-import axios from 'axios';
-import VueAxios from 'vue-axios';
+import axios from './axios';
 
 const app = createApp(App);
 
@@ -31,6 +30,8 @@ const usedComponents = [
   'VListItemGroup',
   'VMain',
   'VContainer',
+  'VTooltip',
+  'VDialog'
 ];
 const usedDirectives = ['v-model'];
 
@@ -48,8 +49,9 @@ const vuetify = createVuetify({
   },
 });
 
+app.config.globalProperties.$axios = axios;
+
 app.use(store)
   .use(router)
   .use(vuetify)
-  .use(VueAxios, axios)
   .mount('#app');
